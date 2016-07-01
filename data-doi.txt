@@ -1,0 +1,8 @@
+Data are provided as gzipped tar files as follows:
+
+Mappings:
+https://dx.doi.org/10.6084/m9.figshare.3469157
+
+Barcode Screen Data:
+https://dx.doi.org/10.6084/m9.figshare.3469112
+
