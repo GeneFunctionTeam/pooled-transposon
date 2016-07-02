@@ -23,7 +23,7 @@ rule('.sai' => '.fastqinv') do |t|
         f = File.new(t.name+".tmp","w")
         f.puts "#{bwa} aln #{bwaindex} #{t.prerequisites[0]} > #{t.name}"
         f.close
-        sh "bsub -P #{ENV['LSF_PROJECT'} -J align1 -o #{t.name+".otmp"} -e #{t.name+".etmp"} sh #{t.name+".tmp"}"
+        sh "bsub -P #{ENV['LSF_PROJECT']} -J align1 -o #{t.name+".otmp"} -e #{t.name+".etmp"} sh #{t.name+".tmp"}"
         sh "rm #{t.name+".tmp"}"
 end
 
