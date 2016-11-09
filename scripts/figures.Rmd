@@ -2,7 +2,8 @@
 
 ```{r setup, echo=FALSE}
 # To compile this document in R:
-# install.packages('knitr')
+# source("https://bioconductor.org/biocLite.R")
+# biocLite("edgeR")
 # library(knitr)
 # knit2html("figures.Rmd")
 
@@ -29,6 +30,12 @@ plot(log(dmsos[["L2spk"]][,3],10),
 
 ```
 
+```{r coverage}
+source("coverage.r")
+source("coverage-expression.r")
+
+```
+
 ### Figure 2C
 ```{r figure2c}
 volcHighlight(spike_edgeanlist[["L2spksims"]],"olaparib","ACAAGATTAAAGTAAAAATAACAGA")
@@ -42,7 +49,33 @@ bmn_hits <- dhitgenes(sens,maplist,"BMN.673",mincount=4)
 hitmappings <- lapply(names(liblist),maphits,el=edgelist,ml=maplist,drug="BMN.673")
 hitmappings <- lapply(hitmappings, function(x) x[,grep("L|barcode|pos|gene|chr|log|PValue",names(x))])
 ewsr1_bmn <- lapply(hitmappings, function(x) x[grep("Ewsr1",x[,"gene"]),])
+ewsr1_keys <- c("ATGGATATATTGAATCTGCCGGACAL8","AAGTTCACGGTTTGCGACTTAGATGL2")
 
-ewsr1_l2_bc <- c("AAGTTCACGGTTTGCGACTTAGATG","GTCTTGAGCAAGTATGATTGCTTAG")
-volcHighlight(edgeanlist[["L2spk"]],"BMN.673",ewsr1_l2_bc)
+combined_pfc_bmn <- data.frame(lib=character(),BMN.673_PValue=numeric(),BMN.673_logFC=numeric())
+for(lib in west_lib_names) {
+  if("BMN.673_logFC" %in% names(edgeanlist[[lib]])) {
+    df <- edgeanlist[[lib]][,c("BMN.673_logFC","BMN.673_PValue")]
+    df$lib = lib
+    combined_pfc_bmn <- rbind(combined_pfc_bmn, df)
+  }
+}
+combined_pfc_bmn$bclib <- paste(gsub("\\d+","",row.names(combined_pfc_bmn)),combined_pfc_bmn$lib,sep="")
+volcHighlight(combined_pfc_bmn,"BMN.673",row.names(combined_pfc_bmn[(combined_pfc_bmn$bclib %in% ewsr1_keys),]),yl=c(-40,0))
 ```
+
+
+```{r}
+bmn_combined <- do.call(rbind, lapply(hitmappings[-4], function(x) { x$lib <- names(x)[5]; x[,c("lib","barcode","logFC","PValue","logCPM","gene")]}))
+
+west_lib_names <- c("L1","L2","L3","L4","L6","L7","L8","L9","L10")
+combined_pfc_bmn <- data.frame(lib=character(),BMN.673_PValue=numeric(),BMN.673_logFC=numeric())
+for(lib in west_lib_names) {
+  if("BMN.673_logFC" %in% names(edgeanlist[[lib]])) {
+    df <- edgeanlist[[lib]][,c("BMN.673_logFC","BMN.673_PValue")]
+    df$lib = lib
+    combined_pfc_bmn <- rbind(combined_pfc_bmn, df)
+  }
+}
+
+```
+
