@@ -11,8 +11,8 @@ knitr::opts_chunk$set(dev="pdf", dpi=300)
 ```
 
 
-### Figure 2A
-```{r figure2a}
+### Figure 3A
+```{r figure3a}
 dmsos <- lapply(liblist, dmso_reads)
 # Calculate pairwise correlations
 rs <- unlist(lapply(dmsos, function(x) cor(x[,-1])))
@@ -36,13 +36,13 @@ source("coverage-expression.r")
 
 ```
 
-### Figure 2C
-```{r figure2c}
+### Figure 3C
+```{r figure3c}
 volcHighlight(spike_edgeanlist[["L2spksims"]],"olaparib","ACAAGATTAAAGTAAAAATAACAGA")
 ```
 
-### Figure 2D
-```{r figure2d}
+### Figure 3D
+```{r figure3d}
 # Code to call hits for BMN 673 sensitivity across all libraries:
 bmn_hits <- dhitgenes(sens,maplist,"BMN.673",mincount=4)
 # To get Ewsr1 barcodes for mutants that score as hits:
@@ -62,20 +62,3 @@ for(lib in west_lib_names) {
 combined_pfc_bmn$bclib <- paste(gsub("\\d+","",row.names(combined_pfc_bmn)),combined_pfc_bmn$lib,sep="")
 volcHighlight(combined_pfc_bmn,"BMN.673",row.names(combined_pfc_bmn[(combined_pfc_bmn$bclib %in% ewsr1_keys),]),yl=c(-40,0))
 ```
-
-
-```{r}
-bmn_combined <- do.call(rbind, lapply(hitmappings[-4], function(x) { x$lib <- names(x)[5]; x[,c("lib","barcode","logFC","PValue","logCPM","gene")]}))
-
-west_lib_names <- c("L1","L2","L3","L4","L6","L7","L8","L9","L10")
-combined_pfc_bmn <- data.frame(lib=character(),BMN.673_PValue=numeric(),BMN.673_logFC=numeric())
-for(lib in west_lib_names) {
-  if("BMN.673_logFC" %in% names(edgeanlist[[lib]])) {
-    df <- edgeanlist[[lib]][,c("BMN.673_logFC","BMN.673_PValue")]
-    df$lib = lib
-    combined_pfc_bmn <- rbind(combined_pfc_bmn, df)
-  }
-}
-
-```
-
